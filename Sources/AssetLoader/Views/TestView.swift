@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@available(iOS 13.0, *)
 struct TestView: View {
     var body: some View {
         Text("Ohh yeahh!, the package works!")

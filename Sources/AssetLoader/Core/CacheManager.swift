@@ -10,6 +10,7 @@ class CacheManager {
     public init() {
         // Get the Documents directory
         documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        print("ITR..documentsPath: \(documentsPath.path)")
     }
     
     /// Converts a full URL to a local file path

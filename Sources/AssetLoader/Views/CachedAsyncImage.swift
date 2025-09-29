@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CachedAsyncImage<Content: View, Placeholder: View>: View {
+public struct CachedAsyncImage<Content: View, Placeholder: View>: View {
     let urlString: String
     let content: (Image) -> Content
     let placeholder: () -> Placeholder
@@ -9,7 +9,7 @@ struct CachedAsyncImage<Content: View, Placeholder: View>: View {
     @State private var isLoading = false
     @State private var error: Error?
     
-    init(
+    public init(
         url urlString: String,
         @ViewBuilder content: @escaping (Image) -> Content,
         @ViewBuilder placeholder: @escaping () -> Placeholder
@@ -19,7 +19,7 @@ struct CachedAsyncImage<Content: View, Placeholder: View>: View {
         self.placeholder = placeholder
     }
     
-    var body: some View {
+    public var body: some View {
         Group {
             if let image = image {
                 content(image)
@@ -75,7 +75,7 @@ struct CachedAsyncImage<Content: View, Placeholder: View>: View {
 }
 
 // Convenience initializer for simple cases
-extension CachedAsyncImage where Content == Image, Placeholder == AnyView {
+public extension CachedAsyncImage where Content == Image, Placeholder == AnyView {
     init(url urlString: String) {
         self.init(url: urlString) { image in
             image

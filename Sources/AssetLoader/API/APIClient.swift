@@ -11,13 +11,16 @@ public class APIClient {
     /// URL session for making requests
     private let urlSession: URLSession
     
+    private let debug: Bool
+    
     /// Initialize the API client with optional base URL
     /// - Parameters:
     ///   - baseURL: The base URL for the API. Defaults to the default server URL
     ///   - urlSession: The URL session to use for requests. Defaults to shared session
-    public init(baseURL: String = APIClient.defaultBaseURL, urlSession: URLSession = .shared) {
+    public init(baseURL: String = APIClient.defaultBaseURL, urlSession: URLSession = .shared, debug: Bool = false) {
         self.baseURL = baseURL
         self.urlSession = urlSession
+        self.debug = debug
     }
     
     /// Fetch download information by ID
@@ -25,6 +28,9 @@ public class APIClient {
     /// - Returns: DownloadResponse containing the download information
     /// - Throws: APIError for various error conditions
     public func getDownload(downloadId: String) async throws -> DownloadResponse {
+        if (debug) {
+            print("ITR..APIClient.getDownload(): About to start a download of \(downloadId)")
+        }
         guard !downloadId.isEmpty else {
             throw APIError.invalidDownloadId
         }
@@ -48,15 +54,29 @@ public class APIClient {
             guard 200...299 ~= httpResponse.statusCode else {
                 throw APIError.httpError(statusCode: httpResponse.statusCode)
             }
-            
+            if (debug) {
+                print("ITR..APIClient.getDownload(): Got data with an http code of \(httpResponse.statusCode)")
+            }
             let downloadResponse = try JSONDecoder().decode(DownloadResponse.self, from: data)
+            if (debug) {
+                print("ITR..APIClient.getDownload(): data decoded successfully")
+            }
             return downloadResponse
             
         } catch let error as APIError {
+            if (debug) {
+                print("ITR..APIClient.getDownload(): an APIError")
+            }
             throw error
         } catch let decodingError as DecodingError {
+            if (debug) {
+                print("ITR..APIClient.getDownload(): decoding Error")
+            }
             throw APIError.decodingError(decodingError)
         } catch {
+            if (debug) {
+                print("ITR..APIClient.getDownload(): an error")
+            }
             throw APIError.networkError(error)
         }
     }

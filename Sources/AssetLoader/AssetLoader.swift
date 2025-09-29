@@ -20,15 +20,18 @@ import Foundation
 public class AssetLoader {
     /// API client for making requests
     private let apiClient: APIClient
+    private let debug: Bool
     
     /// Initialize the AssetLoader with an optional base URL
     /// - Parameter baseURL: The base URL for the API. Uses default if not provided
-    public init(baseURL: String? = nil) {
+    public init(baseURL: String? = nil, debug: Bool = false) {
         if let baseURL = baseURL {
-            self.apiClient = APIClient(baseURL: baseURL)
+            self.apiClient = APIClient(baseURL: baseURL, debug: debug)
         } else {
-            self.apiClient = APIClient()
+            self.apiClient = APIClient(debug: debug)
         }
+        self.debug = debug
+        
     }
     
     /// Load download information for a specific download ID

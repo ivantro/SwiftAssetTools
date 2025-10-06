@@ -1,6 +1,6 @@
 import Foundation
 
-class CacheManager {
+public class CacheManager {
 //    static let shared = CacheManager()
 
     

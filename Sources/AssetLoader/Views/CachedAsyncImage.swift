@@ -47,7 +47,7 @@ public struct CachedAsyncImage<Content: View, Placeholder: View>: View {
     private func loadImage() {
         guard image == nil && !isLoading else { return }
         
-        let cacheManager = CacheManager()
+        let cacheManager = CacheManager(debug: false)
         isLoading = true
         error = nil
         

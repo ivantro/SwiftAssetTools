@@ -51,6 +51,65 @@ public class AssetLoader {
         return download.assets
     }
     
+    /// Download a set of assets referenced by a download id while reporting progress via callbacks
+    /// - Parameters:
+    ///   - downloadId: The download identifier to fetch from the API
+    ///   - onDownloadLoaded: Called after `loadDownload` completes with the decoded `DownloadResponse`
+    ///   - onProgress: Called each time an asset is successfully cached with (totalCount, cachedAssetsCount, assetName)
+    ///   - onComplete: Called after all caching attempts finish with (attempted, cached, failed)
+    ///   - onAssetNotFound: Called when a specific asset cannot be found or downloaded
+    ///   - onError: Called for unexpected errors
+    public func downloadWithProgress(
+        downloadId: String,
+        onDownloadLoaded: ((DownloadResponse) -> Void)? = nil,
+        onProgress: ((Int, Int, String) -> Void)? = nil,
+        onComplete: ((Int, Int, Int) -> Void)? = nil,
+        onAssetNotFound: ((String) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil
+    ) async {
+        do {
+            if (debug) {
+                print("ITR..AssetLoader.downloadWithProgress(): fetching download for id=\(downloadId)")
+            }
+            let downloadResponse = try await loadDownload(downloadId: downloadId)
+            onDownloadLoaded?(downloadResponse)
+            
+            let totalCount = downloadResponse.assets.count
+            var cachedCount = 0
+            var attempted = 0
+            var failed = 0
+            
+            let cacheManager = CacheManager(debug: debug)
+            
+            for assetURLString in downloadResponse.assets {
+                attempted += 1
+                do {
+                    _ = try await cacheManager.getAsset(from: assetURLString)
+                    cachedCount += 1
+                    let assetName = URL(string: assetURLString)?.lastPathComponent ?? assetURLString
+                    onProgress?(totalCount, cachedCount, assetName)
+                } catch {
+                    failed += 1
+                    // Best-effort classification of not-found scenarios
+                    if let cacheError = error as? CacheError {
+                        switch cacheError {
+                        case .invalidURL, .downloadFailed:
+                            onAssetNotFound?(assetURLString)
+                        default:
+                            onError?(error)
+                        }
+                    } else {
+                        onError?(error)
+                    }
+                }
+            }
+            
+            onComplete?(attempted, cachedCount, failed)
+        } catch {
+            onError?(error)
+        }
+    }
+    
     /// Download asset data from a URL
     /// - Parameter urlString: The URL string of the asset to download
     /// - Returns: Data of the downloaded asset

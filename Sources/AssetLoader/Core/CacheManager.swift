@@ -6,11 +6,15 @@ public class CacheManager {
     
     private let documentsPath: URL
     private let session = URLSession.shared
+    private let debug: Bool
     
-    public init() {
+    public init(debug: Bool) {
         // Get the Documents directory
         documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        print("ITR..documentsPath: \(documentsPath.path)")
+        self.debug = debug
+        if debug {
+            print("ITR..documentsPath: \(documentsPath.path)")
+        }
     }
     
     /// Converts a full URL to a local file path
@@ -79,7 +83,11 @@ public class CacheManager {
     public func getAsset(from urlString: String) async throws -> URL {
         // Check if asset exists locally
         if let localURL = localURL(for: urlString) {
-            print("ITR..File exists locally: \(localURL)")
+            // print("ITR..File exists locally: \(localURL)")
+            if debug {
+                print("     File exists locally: \(localURL.lastPathComponent)")
+            }
+
             return localURL
         }
         

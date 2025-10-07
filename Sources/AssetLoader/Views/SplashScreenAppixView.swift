@@ -115,13 +115,21 @@ public struct SplashScreenAppixView: View {
     }
     
     public var body: some View {
-        ZStack(alignment: .bottom) {
-            Image("splash1242x2208", bundle: .module)
+        ZStack {
+            // Background color
+            Rectangle()
+                .fill(Color(red: 254/255, green: 135/255, blue: 0/255))
+                .ignoresSafeArea()
+            
+            Image("logo1536x1536", bundle: .module)
                 .resizable()
                 .scaledToFit()
-            
-            if viewModel.progressTotal > 0 {
-                VStack {
+
+            VStack {
+                Spacer()
+                
+                // Progress view at bottom
+                if viewModel.progressTotal > 0 && viewModel.progressCurrent != viewModel.progressTotal {
                     ProgressView(value: Double(viewModel.progressCurrent), total: Double(viewModel.progressTotal))
                         .progressViewStyle(.linear)
                         .tint(.white)

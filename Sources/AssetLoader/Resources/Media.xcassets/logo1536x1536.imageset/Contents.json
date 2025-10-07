@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "AppixLogo1536x1536Transparent.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

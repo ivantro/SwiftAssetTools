@@ -25,6 +25,7 @@ public class AssetLoader {
     /// Initialize the AssetLoader with an optional base URL
     /// - Parameter baseURL: The base URL for the API. Uses default if not provided
     public init(baseURL: String? = nil, debug: Bool = false) {
+        print("ITR..AssetLoader.init(debug: \(debug))")
         if let baseURL = baseURL {
             self.apiClient = APIClient(baseURL: baseURL, debug: debug)
         } else {

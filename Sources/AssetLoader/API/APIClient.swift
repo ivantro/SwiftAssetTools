@@ -36,6 +36,9 @@ public class APIClient {
         }
         
         let urlString = "\(baseURL)/downloads/\(downloadId)"
+        if (debug) {
+            print("ITR..APIClient.getDownload(): urlString is \(urlString)")
+        }
         guard let url = URL(string: urlString) else {
             throw APIError.invalidURL
         }

@@ -16,6 +16,8 @@ public struct SplashScreenAppixView: View {
             let baseURL: String?
             let minimumDisplaySeconds: Double
             let debug: Bool
+            let height: Int
+            let width: Int
         }
         
         @Published var progressCurrent: Int = 0
@@ -26,7 +28,16 @@ public struct SplashScreenAppixView: View {
         private let config: Config
         
         init(config: Config) {
-            self.config = config
+            // Modify downloadId to include height and width parameters
+            let modifiedDownloadId = "\(config.downloadId)?h=\(config.height)&w=\(config.width)"
+            self.config = Config(
+                downloadId: modifiedDownloadId,
+                baseURL: config.baseURL,
+                minimumDisplaySeconds: config.minimumDisplaySeconds,
+                debug: config.debug,
+                height: config.height,
+                width: config.width
+            )
         }
         
         @MainActor
@@ -92,6 +103,8 @@ public struct SplashScreenAppixView: View {
     private let baseURL: String?
     private let minimumDisplaySeconds: Double
     private let debug: Bool
+    private let height: Int
+    private let width: Int
     private let onFinished: () -> Void
     private let onError: ((String) -> Void)?
     
@@ -102,6 +115,8 @@ public struct SplashScreenAppixView: View {
         baseURL: String? = nil,
         minimumDisplaySeconds: Double = 2,
         debug: Bool = false,
+        height: Int,
+        width: Int,
         onFinished: @escaping () -> Void,
         onError: ((String) -> Void)? = nil
     ) {
@@ -109,9 +124,11 @@ public struct SplashScreenAppixView: View {
         self.baseURL = baseURL
         self.minimumDisplaySeconds = minimumDisplaySeconds
         self.debug = debug
+        self.height = height
+        self.width = width
         self.onFinished = onFinished
         self.onError = onError
-        _viewModel = StateObject(wrappedValue: ViewModel(config: .init(downloadId: downloadId, baseURL: baseURL, minimumDisplaySeconds: minimumDisplaySeconds, debug: debug)))
+        _viewModel = StateObject(wrappedValue: ViewModel(config: .init(downloadId: downloadId, baseURL: baseURL, minimumDisplaySeconds: minimumDisplaySeconds, debug: debug, height: height, width: width)))
     }
     
     public var body: some View {
